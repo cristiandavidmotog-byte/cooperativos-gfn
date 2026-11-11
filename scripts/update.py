@@ -82,13 +82,10 @@ def digevo_count():
     except Exception as e:  # noqa: BLE001
         print("Aviso: no se pudo leer Digevo:", e, file=sys.stderr)
         return None
-    counts = [len(re.findall(p, html)) for p in (
-        r'text-\[#95DB32\][^"]*font-bold',
-        r'flex flex-col mb-4',
-        r'<p[^>]*font-bold[^>]*>')]
-    print("Digevo: tamaño", len(html), "conteos", counts, file=sys.stderr)
-    i = html.find("Valheim")
-    print("Digevo muestra:", repr(html[max(0, i - 400):i + 200]), file=sys.stderr)
+    # La página trae el catálogo como un JSON embebido: un objeto por juego.
+    counts = [len(set(re.findall(r'\{"id":"([0-9a-f-]{36})","title":', html))),
+              len(re.findall(r'flex flex-col mb-4', html))]
+    print("Digevo: conteos", counts, file=sys.stderr)
     best = max(counts)
     # El catálogo tiene más de 2.000 juegos; un conteo bajo significa que la
     # página cambió o se carga con JavaScript, y entonces no se usa.
