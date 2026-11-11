@@ -82,8 +82,15 @@ def digevo_count():
     except Exception as e:  # noqa: BLE001
         print("Aviso: no se pudo leer Digevo:", e, file=sys.stderr)
         return None
-    n = len(re.findall(r'class="[^"]*flex flex-col mb-4', html))
-    return n or None
+    counts = [len(re.findall(p, html)) for p in (
+        r'text-\[#95DB32\][^"]*font-bold',
+        r'flex flex-col mb-4',
+        r'<p[^>]*font-bold[^>]*>')]
+    print("Digevo: tamaño", len(html), "conteos", counts, file=sys.stderr)
+    best = max(counts)
+    # El catálogo tiene más de 2.000 juegos; un conteo bajo significa que la
+    # página cambió o se carga con JavaScript, y entonces no se usa.
+    return best if best > 1000 else None
 
 
 def game_pass_ids():
