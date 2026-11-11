@@ -1,0 +1,29 @@
+name: Actualizar datos
+
+on:
+  schedule:
+    # Lunes 21:17 UTC = 4:17 p. m. en Colombia (GitHub puede demorar un rato).
+    - cron: "17 21 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Recolectar NVIDIA, Digevo, Steam y Game Pass
+        run: python3 scripts/update.py
+      - name: Guardar datos
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/games.json
+          git commit -m "Datos $(date -u +%Y-%m-%d)" || echo "Sin cambios"
+          git push
