@@ -87,6 +87,8 @@ def digevo_count():
         r'flex flex-col mb-4',
         r'<p[^>]*font-bold[^>]*>')]
     print("Digevo: tamaño", len(html), "conteos", counts, file=sys.stderr)
+    i = html.find("Valheim")
+    print("Digevo muestra:", repr(html[max(0, i - 400):i + 200]), file=sys.stderr)
     best = max(counts)
     # El catálogo tiene más de 2.000 juegos; un conteo bajo significa que la
     # página cambió o se carga con JavaScript, y entonces no se usa.
